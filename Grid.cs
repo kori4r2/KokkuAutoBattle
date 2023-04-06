@@ -24,14 +24,13 @@ namespace AutoBattle
             }
         }
 
-        public GridCell? GetCellAtPosition(int row, int column)
+        public GridCell GetCellAtPosition(int column, int row)
         {
             if (row < 0 || row >= Rows || column < 0 || column >= Columns)
                 return null;
             return cells[(Columns * row) + column];
         }
 
-        // prints the matrix that indicates the tiles of the battlefield
         public void DrawBattlefield()
         {
             for (int row = 0; row < Rows; row++)

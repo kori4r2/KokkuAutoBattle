@@ -1,6 +1,6 @@
 namespace AutoBattle
 {
-    public struct GridCell
+    public class GridCell
     {
         public int column;
         public int row;
