@@ -5,12 +5,13 @@ namespace AutoBattle
     public class Character
     {
         public string Name { get; set; }
-        public float Health;
-        public float BaseDamage;
-        public float DamageMultiplier { get; set; }
-        public GridCell currentCell;
+        public float Health = 0;
+        public float BaseDamage = 0;
+        public float DamageMultiplier { get; set; } = 1;
+        public GridCell currentCell = null;
         public int PlayerIndex;
-        public Character Target { get; set; }
+        public Character Target { get; set; } = null;
+        private Random random = new Random();
         public Character(CharacterClass characterClass)
         {
 
@@ -19,7 +20,8 @@ namespace AutoBattle
 
         public bool TakeDamage(float amount)
         {
-            if ((Health -= BaseDamage) <= 0)
+            Health -= amount;
+            if (Health <= 0)
             {
                 Die();
                 return true;
@@ -105,9 +107,10 @@ namespace AutoBattle
 
         public void Attack(Character target)
         {
-            Random rand = new Random();
-            target.TakeDamage(rand.Next(0, (int)BaseDamage));
-            Console.WriteLine($"Player {PlayerIndex} is attacking the player {Target.PlayerIndex} and did {BaseDamage} damage\n");
+            float calculatedDamage = random.Next(0, (int)BaseDamage);
+            Console.WriteLine($"BaseDamage = {BaseDamage}, rolled for {calculatedDamage}");
+            target.TakeDamage(calculatedDamage);
+            Console.WriteLine($"Player {PlayerIndex} is attacking the player {Target.PlayerIndex} and did {calculatedDamage} damage\n");
         }
     }
 }

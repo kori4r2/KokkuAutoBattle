@@ -80,8 +80,8 @@ namespace AutoBattle
             Console.WriteLine($"Enemy Class Choice: {enemyClass}");
             EnemyCharacter = new Character(enemyClass);
             EnemyCharacter.Health = 100;
-            PlayerCharacter.BaseDamage = 20;
-            PlayerCharacter.PlayerIndex = 1;
+            EnemyCharacter.BaseDamage = 20;
+            EnemyCharacter.PlayerIndex = 1;
         }
 
         private void PopulateListAndSetTargets()
@@ -152,11 +152,11 @@ namespace AutoBattle
 
         private bool CheckGameEnd()
         {
-            if (PlayerCharacter.Health == 0)
+            if (PlayerCharacter.Health <= 0)
             {
                 return true;
             }
-            else if (EnemyCharacter.Health == 0)
+            else if (EnemyCharacter.Health <= 0)
             {
                 Console.Write(Environment.NewLine + Environment.NewLine);
 
