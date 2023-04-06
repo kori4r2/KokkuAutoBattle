@@ -6,7 +6,7 @@ namespace AutoBattle
 {
     internal class Program
     {
-        private Grid grid = new Grid(5, 5);
+        private Grid grid;
         private Character PlayerCharacter;
         private Character EnemyCharacter;
         private List<Character> AllCharacters = new List<Character>();
@@ -21,6 +21,7 @@ namespace AutoBattle
 
         private void Setup()
         {
+            CreateGrid();
             GetAndCreatePlayerCharacter();
             CreateEnemyCharacter();
             PopulateListAndSetTargets();
@@ -29,17 +30,41 @@ namespace AutoBattle
             grid.DrawBattlefield();
         }
 
+        private void CreateGrid()
+        {
+            int numberParsed;
+            int rowNumber;
+            int columnNumber;
+            Console.WriteLine("Choose number of rows for the grid [1-999999]: ");
+            numberParsed = ReadValidNumberFromConsole();
+            rowNumber = Math.Clamp(numberParsed, 1, 999999);
+            Console.WriteLine("Choose number of columns for the grid [1-999999]: ");
+            numberParsed = ReadValidNumberFromConsole();
+            columnNumber = Math.Clamp(numberParsed, 1, 999999);
+            Console.WriteLine($"Creating grid with {rowNumber} row{(rowNumber > 1 ? "s" : "")} and {columnNumber} column{(columnNumber > 1 ? "s" : "")}");
+            grid = new Grid(rowNumber, columnNumber);
+        }
+
+        private static int ReadValidNumberFromConsole()
+        {
+            int numberParsed;
+            string lineRead = Console.ReadLine();
+            while (!int.TryParse(lineRead, out numberParsed))
+            {
+                Console.WriteLine("Please input a valid number: ");
+                lineRead = Console.ReadLine();
+            }
+            return numberParsed;
+        }
+
         private void GetAndCreatePlayerCharacter()
         {
             bool playerCharacterCreated = false;
             do
             {
-                //asks for the player to choose between four possible classes via console.
                 Console.WriteLine("Choose Between One of these Classes:\n");
                 Console.WriteLine("[1] Paladin, [2] Warrior, [3] Cleric, [4] Archer");
-                //store the player choice in a variable
                 string choice = Console.ReadLine();
-
                 switch (choice)
                 {
                     case "1":
@@ -131,7 +156,6 @@ namespace AutoBattle
 
         public void StartGame()
         {
-            //AllPlayers.Sort();  
             do
             {
                 Console.Write(Environment.NewLine + Environment.NewLine);
@@ -154,16 +178,14 @@ namespace AutoBattle
         {
             if (PlayerCharacter.Health <= 0)
             {
+                Console.Write(Environment.NewLine + Environment.NewLine);
+                Console.WriteLine("Game Over, Player Character has died");
                 return true;
             }
             else if (EnemyCharacter.Health <= 0)
             {
                 Console.Write(Environment.NewLine + Environment.NewLine);
-
-                // endgame?
-
-                Console.Write(Environment.NewLine + Environment.NewLine);
-
+                Console.WriteLine("Game Over, Enemy Character has died");
                 return true;
             }
             return false;

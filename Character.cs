@@ -14,9 +14,7 @@ namespace AutoBattle
         private Random random = new Random();
         public Character(CharacterClass characterClass)
         {
-
         }
-
 
         public bool TakeDamage(float amount)
         {
@@ -36,6 +34,9 @@ namespace AutoBattle
 
         public void StartTurn(Grid battlefield)
         {
+            if (Health <= 0)
+                return;
+
             if (CheckCloseTargets(battlefield))
             {
                 Attack(Target);

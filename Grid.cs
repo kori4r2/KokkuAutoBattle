@@ -38,14 +38,7 @@ namespace AutoBattle
                 for (int column = 0; column < Columns; column++)
                 {
                     GridCell currentCell = cells[(Columns * row) + column];
-                    if (currentCell.occupied)
-                    {
-                        Console.Write("[X]\t");
-                    }
-                    else
-                    {
-                        Console.Write($"[ ]\t");
-                    }
+                    Console.Write($"[{(currentCell.occupied ? "X" : " ")}]\t");
                 }
                 Console.Write(Environment.NewLine + Environment.NewLine);
             }
