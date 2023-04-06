@@ -6,32 +6,39 @@ namespace AutoBattle
     public class Grid
     {
         public List<GridCell> cells = new List<GridCell>();
-        public int xLenght;
-        public int yLength;
-        public Grid(int Lines, int Columns)
+        public int Rows;
+        public int Columns;
+        public Grid(int Rows, int Columns)
         {
-            xLenght = Lines;
-            yLength = Columns;
+            this.Rows = Rows;
+            this.Columns = Columns;
             Console.WriteLine("The battlefield has been created\n");
-            for (int i = 0; i < Lines; i++)
+            for (int row = 0; row < Rows; row++)
             {
-                for (int j = 0; j < Columns; j++)
+                for (int column = 0; column < Columns; column++)
                 {
-                    GridCell newCell = new GridCell(j, i, false, (Columns * i) + j);
+                    GridCell newCell = new GridCell(column, row, false, (Columns * row) + column);
                     Console.Write($"{newCell.Index}\n");
                     cells.Add(newCell);
                 }
             }
         }
 
-        // prints the matrix that indicates the tiles of the battlefield
-        public void DrawBattlefield(int Lines, int Columns)
+        public GridCell? GetCellAtPosition(int row, int column)
         {
-            for (int i = 0; i < Lines; i++)
+            if (row < 0 || row >= Rows || column < 0 || column >= Columns)
+                return null;
+            return cells[(Columns * row) + column];
+        }
+
+        // prints the matrix that indicates the tiles of the battlefield
+        public void DrawBattlefield()
+        {
+            for (int row = 0; row < Rows; row++)
             {
-                for (int j = 0; j < Columns; j++)
+                for (int column = 0; column < Columns; column++)
                 {
-                    GridCell currentCell = new GridCell();
+                    GridCell currentCell = cells[(Columns * row) + column];
                     if (currentCell.occupied)
                     {
                         Console.Write("[X]\t");

@@ -125,7 +125,7 @@ namespace AutoBattle
                     RandomLocation.occupied = true;
                     grid.cells[random] = RandomLocation;
                     EnemyCharacter.currentCell = grid.cells[random];
-                    grid.DrawBattlefield(5, 5);
+                    grid.DrawBattlefield();
                 }
                 else
                 {

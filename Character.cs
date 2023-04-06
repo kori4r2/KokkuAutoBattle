@@ -32,11 +32,6 @@ namespace AutoBattle
             //TODO >> maybe kill him?
         }
 
-        public void WalkTO(bool CanWalk)
-        {
-
-        }
-
         public void StartTurn(Grid battlefield)
         {
             if (CheckCloseTargets(battlefield))
@@ -46,60 +41,52 @@ namespace AutoBattle
             }
             else
             {   // if there is no target close enough, calculates in wich direction this character should move to be closer to a possible target
-                if (currentCell.xIndex > Target.currentCell.xIndex)
+                if (currentCell.column > Target.currentCell.column)
                 {
-                    if (battlefield.cells.Exists(x => x.Index == currentCell.Index - 1))
+                    if (currentCell.column > 0)
                     {
                         currentCell.occupied = false;
-                        battlefield.cells[currentCell.Index] = currentCell;
-                        currentCell = battlefield.cells.Find(x => x.Index == currentCell.Index - 1);
+                        currentCell = battlefield.GetCellAtPosition(currentCell.column - 1, currentCell.row).Value;
                         currentCell.occupied = true;
-                        battlefield.cells[currentCell.Index] = currentCell;
                         Console.WriteLine($"Player {PlayerIndex} walked left\n");
-                        battlefield.DrawBattlefield(5, 5);
+                        battlefield.DrawBattlefield();
                         return;
                     }
                 }
-                else if (currentCell.xIndex < Target.currentCell.xIndex)
+                else if (currentCell.column < Target.currentCell.column)
                 {
-                    if (battlefield.cells.Exists(x => x.Index == currentCell.Index + 1))
+                    if (currentCell.column < battlefield.Rows - 1)
                     {
                         currentCell.occupied = false;
-                        battlefield.cells[currentCell.Index] = currentCell;
-                        currentCell = battlefield.cells.Find(x => x.Index == currentCell.Index + 1);
+                        currentCell = battlefield.GetCellAtPosition(currentCell.column + 1, currentCell.row).Value;
                         currentCell.occupied = true;
-                        battlefield.cells[currentCell.Index] = currentCell;
                         Console.WriteLine($"Player {PlayerIndex} walked right\n");
-                        battlefield.DrawBattlefield(5, 5);
+                        battlefield.DrawBattlefield();
                         return;
                     }
                 }
 
-                if (currentCell.yIndex > Target.currentCell.yIndex)
+                if (currentCell.row > Target.currentCell.row)
                 {
-                    if (battlefield.cells.Exists(x => x.Index == currentCell.Index - battlefield.xLenght))
+                    if (currentCell.row > 0)
                     {
                         currentCell.occupied = false;
-                        battlefield.cells[currentCell.Index] = currentCell;
-                        currentCell = battlefield.cells.Find(x => x.Index == currentCell.Index - battlefield.xLenght);
+                        currentCell = battlefield.GetCellAtPosition(currentCell.column, currentCell.row - 1).Value;
                         currentCell.occupied = true;
-                        battlefield.cells[currentCell.Index] = currentCell;
                         Console.WriteLine($"Player {PlayerIndex} walked up\n");
-                        battlefield.DrawBattlefield(5, 5);
+                        battlefield.DrawBattlefield();
                         return;
                     }
                 }
-                else if (currentCell.yIndex < Target.currentCell.yIndex)
+                else if (currentCell.row < Target.currentCell.row)
                 {
-                    if (battlefield.cells.Exists(x => x.Index == currentCell.Index + battlefield.xLenght))
+                    if (currentCell.row < battlefield.Columns - 1)
                     {
                         currentCell.occupied = false;
-                        battlefield.cells[currentCell.Index] = currentCell;
-                        currentCell = battlefield.cells.Find(x => x.Index == currentCell.Index + battlefield.xLenght);
+                        currentCell = battlefield.GetCellAtPosition(currentCell.column, currentCell.row + 1).Value;
                         currentCell.occupied = true;
-                        battlefield.cells[currentCell.Index] = currentCell;
                         Console.WriteLine($"Player {PlayerIndex} walked down\n");
-                        battlefield.DrawBattlefield(5, 5);
+                        battlefield.DrawBattlefield();
                         return;
                     }
                 }
@@ -109,12 +96,11 @@ namespace AutoBattle
         // Check in x and y directions if there is any character close enough to be a target.
         private bool CheckCloseTargets(Grid battlefield)
         {
-            bool left = battlefield.cells.Find(x => x.Index == currentCell.Index - 1).occupied;
-            bool right = battlefield.cells.Find(x => x.Index == currentCell.Index + 1).occupied;
-            bool up = battlefield.cells.Find(x => x.Index == currentCell.Index + battlefield.xLenght).occupied;
-            bool down = battlefield.cells.Find(x => x.Index == currentCell.Index - battlefield.xLenght).occupied;
-
-            return left & right & up & down;
+            bool left = battlefield.GetCellAtPosition(currentCell.column + 1, currentCell.row)?.occupied ?? false;
+            bool right = battlefield.GetCellAtPosition(currentCell.column - 1, currentCell.row)?.occupied ?? false;
+            bool down = battlefield.GetCellAtPosition(currentCell.column, currentCell.row - 1)?.occupied ?? false;
+            bool up = battlefield.GetCellAtPosition(currentCell.column, currentCell.row + 1)?.occupied ?? false;
+            return left || right || up || down;
         }
 
         public void Attack(Character target)
