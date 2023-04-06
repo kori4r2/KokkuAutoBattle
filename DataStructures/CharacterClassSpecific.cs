@@ -2,10 +2,9 @@ namespace AutoBattle
 {
     public struct CharacterClassSpecific
     {
-        CharacterClass CharacterClass;
-        float hpModifier;
-        float ClassDamage;
-        CharacterSkills[] skills;
-
+        private CharacterClass CharacterClass;
+        private float hpModifier;
+        private float ClassDamage;
+        private CharacterSkill[] skills;
     }
 }
