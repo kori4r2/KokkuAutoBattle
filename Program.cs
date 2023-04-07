@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace AutoBattle
 {
@@ -9,7 +9,9 @@ namespace AutoBattle
         private Grid grid;
         private Character PlayerCharacter;
         private Character EnemyCharacter;
+        private CharacterFactory characterFactory = new CharacterFactory();
         private List<Character> AllCharacters = new List<Character>();
+        private ReadOnlyCollection<Character> ReadOnlyCharacterList;
         private Random random = new Random();
 
         private static void Main()
@@ -24,9 +26,7 @@ namespace AutoBattle
             CreateGrid();
             GetAndCreatePlayerCharacter();
             CreateEnemyCharacter();
-            PopulateListAndSetTargets();
-            AlocatePlayers();
-            AlocateEnemyCharacter();
+            ReadOnlyCharacterList = AllCharacters.AsReadOnly();
             grid.DrawBattlefieldChanges();
         }
 
@@ -35,12 +35,12 @@ namespace AutoBattle
             int numberParsed;
             int rowNumber;
             int columnNumber;
-            Console.WriteLine("Choose number of rows for the grid [1-999999]: ");
+            Console.WriteLine("Choose number of rows for the grid [2-999999]: ");
             numberParsed = ReadValidNumberFromConsole();
-            rowNumber = Math.Clamp(numberParsed, 1, 999999);
-            Console.WriteLine("Choose number of columns for the grid [1-999999]: ");
+            rowNumber = Math.Clamp(numberParsed, 2, 999999);
+            Console.WriteLine("Choose number of columns for the grid [2-999999]: ");
             numberParsed = ReadValidNumberFromConsole();
-            columnNumber = Math.Clamp(numberParsed, 1, 999999);
+            columnNumber = Math.Clamp(numberParsed, 2, 999999);
             Console.WriteLine($"Creating grid with {rowNumber} row{(rowNumber > 1 ? "s" : "")} and {columnNumber} column{(columnNumber > 1 ? "s" : "")}...");
             grid = new Grid(rowNumber, columnNumber);
         }
@@ -63,7 +63,7 @@ namespace AutoBattle
             do
             {
                 Console.WriteLine("Choose Between One of these Classes:\n");
-                Console.WriteLine("[1] Paladin, [2] Warrior, [3] Cleric, [4] Archer");
+                Console.WriteLine($"[1] Paladin, [2] Warrior, [3] Cleric, [4] Archer");
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
@@ -91,10 +91,21 @@ namespace AutoBattle
         {
             CharacterClass characterClass = (CharacterClass)classIndex;
             Console.WriteLine($"Player Class Choice: {characterClass}");
-            PlayerCharacter = new Character();
-            PlayerCharacter.Health = 100;
-            PlayerCharacter.BaseDamage = 20;
-            PlayerCharacter.PlayerIndex = 0;
+            GridCell emptyCell = FindEmptyPosition();
+            PlayerCharacter = characterFactory.CreatePlayerCharacter(characterClass, emptyCell);
+            AllCharacters.Add(PlayerCharacter);
+            Console.Write($"Player Characher placed at row {PlayerCharacter.CurrentCell.Row} and column {PlayerCharacter.CurrentCell.Column}\n");
+        }
+
+        private GridCell FindEmptyPosition()
+        {
+            do
+            {
+                int randomIndex = random.Next(0, grid.CellCount);
+                GridCell RandomLocation = grid.GetCellAtIndex(randomIndex);
+                if (!RandomLocation.Occupied)
+                    return RandomLocation;
+            } while (true);
         }
 
         private void CreateEnemyCharacter()
@@ -103,55 +114,10 @@ namespace AutoBattle
             int randomInteger = random.Next(1, 4);
             CharacterClass enemyClass = (CharacterClass)randomInteger;
             Console.WriteLine($"Enemy Class Choice: {enemyClass}");
-            EnemyCharacter = new Character();
-            EnemyCharacter.Health = 100;
-            EnemyCharacter.BaseDamage = 20;
-            EnemyCharacter.PlayerIndex = 1;
-        }
-
-        private void PopulateListAndSetTargets()
-        {
-            EnemyCharacter.Target = PlayerCharacter;
-            PlayerCharacter.Target = EnemyCharacter;
-            AllCharacters.Add(PlayerCharacter);
+            GridCell emptyCell = FindEmptyPosition();
+            EnemyCharacter = characterFactory.CreateEnemyCharacter(enemyClass, emptyCell);
             AllCharacters.Add(EnemyCharacter);
-        }
-
-        private void AlocatePlayers()
-        {
-            AlocatePlayerCharacter();
-        }
-
-        private void AlocatePlayerCharacter()
-        {
-            do
-            {
-                int randomIndex = random.Next(0, grid.CellCount);
-                GridCell RandomLocation = grid.GetCellAtIndex(randomIndex);
-                if (!RandomLocation.Occupied)
-                {
-                    PlayerCharacter.currentCell = RandomLocation;
-                    RandomLocation.Occupied = true;
-                    Console.Write($"Player Characher placed at row {PlayerCharacter.currentCell.Row} and column {PlayerCharacter.currentCell.Column}\n");
-                    return;
-                }
-            } while (true);
-        }
-
-        private void AlocateEnemyCharacter()
-        {
-            do
-            {
-                int randomIndex = random.Next(0, grid.CellCount);
-                GridCell RandomLocation = grid.GetCellAtIndex(randomIndex);
-                if (!RandomLocation.Occupied)
-                {
-                    EnemyCharacter.currentCell = RandomLocation;
-                    RandomLocation.Occupied = true;
-                    Console.Write($"Enemy Characher placed at row {PlayerCharacter.currentCell.Row} and column {PlayerCharacter.currentCell.Column}\n");
-                    return;
-                }
-            } while (true);
+            Console.Write($"Enemy Characher placed at row {EnemyCharacter.CurrentCell.Row} and column {EnemyCharacter.CurrentCell.Column}\n");
         }
 
         public void StartGame()
@@ -170,7 +136,7 @@ namespace AutoBattle
         {
             foreach (Character character in AllCharacters)
             {
-                character.StartTurn(grid);
+                character.StartTurn(grid, ReadOnlyCharacterList);
                 grid.DrawBattlefieldChanges();
             }
         }

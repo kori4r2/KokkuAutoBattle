@@ -32,9 +32,9 @@ namespace AutoBattle
             cells.Add(newCell);
         }
 
-        public bool IsPositionValidAndOccupied(int column, int row)
+        public bool IsPositionValidAndVacant(int column, int row)
         {
-            return GetCellAtPosition(column, row)?.Occupied ?? false;
+            return (!GetCellAtPosition(column, row)?.Occupied) ?? false;
         }
 
         public GridCell GetCellAtPosition(int column, int row)
