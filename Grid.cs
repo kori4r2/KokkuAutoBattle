@@ -8,20 +8,27 @@ namespace AutoBattle
         public List<GridCell> cells = new List<GridCell>();
         public int Rows;
         public int Columns;
+        private bool changesDetected;
         public Grid(int Rows, int Columns)
         {
             this.Rows = Rows;
             this.Columns = Columns;
+            changesDetected = true;
             Console.WriteLine("The battlefield has been created\n");
             for (int row = 0; row < Rows; row++)
             {
                 for (int column = 0; column < Columns; column++)
                 {
-                    GridCell newCell = new GridCell(column, row, false, (Columns * row) + column);
-                    Console.Write($"{newCell.Index}\n");
-                    cells.Add(newCell);
+                    CreateNewGridCell(Columns, row, column);
                 }
             }
+        }
+
+        private void CreateNewGridCell(int Columns, int row, int column)
+        {
+            GridCell newCell = new GridCell(column, row, false, (Columns * row) + column);
+            newCell.AddStatusChangeListener(() => changesDetected = true);
+            cells.Add(newCell);
         }
 
         public GridCell GetCellAtPosition(int column, int row)
@@ -31,18 +38,21 @@ namespace AutoBattle
             return cells[(Columns * row) + column];
         }
 
-        public void DrawBattlefield()
+        public void DrawBattlefieldChanges()
         {
+            if (!changesDetected)
+                return;
             for (int row = 0; row < Rows; row++)
             {
                 for (int column = 0; column < Columns; column++)
                 {
                     GridCell currentCell = cells[(Columns * row) + column];
-                    Console.Write($"[{(currentCell.occupied ? "X" : " ")}]\t");
+                    Console.Write($"[{(currentCell.Occupied ? "X" : " ")}]\t");
                 }
                 Console.Write(Environment.NewLine + Environment.NewLine);
             }
             Console.Write(Environment.NewLine + Environment.NewLine);
+            changesDetected = false;
         }
     }
 }

@@ -4,8 +4,20 @@ namespace AutoBattle
     {
         public int column;
         public int row;
-        public bool occupied;
+        private bool occupied;
+        public bool Occupied
+        {
+            get => occupied;
+            set
+            {
+                bool shouldCallback = value != occupied;
+                occupied = value;
+                if (shouldCallback)
+                    OnStatusChanged?.Invoke();
+            }
+        }
         public int Index;
+        private event VoidEvent OnStatusChanged;
 
         public GridCell(int x, int y, bool occupied, int index)
         {
@@ -13,6 +25,11 @@ namespace AutoBattle
             row = y;
             this.occupied = occupied;
             Index = index;
+        }
+
+        public void AddStatusChangeListener(VoidEvent callback)
+        {
+            OnStatusChanged += callback;
         }
     }
 }

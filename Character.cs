@@ -48,11 +48,10 @@ namespace AutoBattle
                 {
                     if (currentCell.column > 0)
                     {
-                        currentCell.occupied = false;
+                        currentCell.Occupied = false;
                         currentCell = battlefield.GetCellAtPosition(currentCell.column - 1, currentCell.row);
-                        currentCell.occupied = true;
+                        currentCell.Occupied = true;
                         Console.WriteLine($"Player {PlayerIndex} walked right to row {currentCell.row} and column {currentCell.column}\n");
-                        battlefield.DrawBattlefield();
                         return;
                     }
                 }
@@ -60,11 +59,10 @@ namespace AutoBattle
                 {
                     if (currentCell.column < battlefield.Rows - 1)
                     {
-                        currentCell.occupied = false;
+                        currentCell.Occupied = false;
                         currentCell = battlefield.GetCellAtPosition(currentCell.column + 1, currentCell.row);
-                        currentCell.occupied = true;
+                        currentCell.Occupied = true;
                         Console.WriteLine($"Player {PlayerIndex} walked left to row {currentCell.row} and column {currentCell.column}\n");
-                        battlefield.DrawBattlefield();
                         return;
                     }
                 }
@@ -73,11 +71,10 @@ namespace AutoBattle
                 {
                     if (currentCell.row > 0)
                     {
-                        currentCell.occupied = false;
+                        currentCell.Occupied = false;
                         currentCell = battlefield.GetCellAtPosition(currentCell.column, currentCell.row - 1);
-                        currentCell.occupied = true;
+                        currentCell.Occupied = true;
                         Console.WriteLine($"Player {PlayerIndex} walked up to row {currentCell.row} and column {currentCell.column}\n");
-                        battlefield.DrawBattlefield();
                         return;
                     }
                 }
@@ -85,11 +82,10 @@ namespace AutoBattle
                 {
                     if (currentCell.row < battlefield.Columns - 1)
                     {
-                        currentCell.occupied = false;
+                        currentCell.Occupied = false;
                         currentCell = battlefield.GetCellAtPosition(currentCell.column, currentCell.row + 1);
-                        currentCell.occupied = true;
+                        currentCell.Occupied = true;
                         Console.WriteLine($"Player {PlayerIndex} walked down to row {currentCell.row} and column {currentCell.column}\n");
-                        battlefield.DrawBattlefield();
                         return;
                     }
                 }
@@ -99,10 +95,10 @@ namespace AutoBattle
         // Check in x and y directions if there is any character close enough to be a target.
         private bool CheckCloseTargets(Grid battlefield)
         {
-            bool left = battlefield.GetCellAtPosition(currentCell.column - 1, currentCell.row)?.occupied ?? false;
-            bool right = battlefield.GetCellAtPosition(currentCell.column + 1, currentCell.row)?.occupied ?? false;
-            bool down = battlefield.GetCellAtPosition(currentCell.column, currentCell.row + 1)?.occupied ?? false;
-            bool up = battlefield.GetCellAtPosition(currentCell.column, currentCell.row - 1)?.occupied ?? false;
+            bool left = battlefield.GetCellAtPosition(currentCell.column - 1, currentCell.row)?.Occupied ?? false;
+            bool right = battlefield.GetCellAtPosition(currentCell.column + 1, currentCell.row)?.Occupied ?? false;
+            bool down = battlefield.GetCellAtPosition(currentCell.column, currentCell.row + 1)?.Occupied ?? false;
+            bool up = battlefield.GetCellAtPosition(currentCell.column, currentCell.row - 1)?.Occupied ?? false;
             return left || right || up || down;
         }
 

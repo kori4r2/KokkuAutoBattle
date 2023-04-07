@@ -27,7 +27,7 @@ namespace AutoBattle
             PopulateListAndSetTargets();
             AlocatePlayers();
             AlocateEnemyCharacter();
-            grid.DrawBattlefield();
+            grid.DrawBattlefieldChanges();
         }
 
         private void CreateGrid()
@@ -41,7 +41,7 @@ namespace AutoBattle
             Console.WriteLine("Choose number of columns for the grid [1-999999]: ");
             numberParsed = ReadValidNumberFromConsole();
             columnNumber = Math.Clamp(numberParsed, 1, 999999);
-            Console.WriteLine($"Creating grid with {rowNumber} row{(rowNumber > 1 ? "s" : "")} and {columnNumber} column{(columnNumber > 1 ? "s" : "")}");
+            Console.WriteLine($"Creating grid with {rowNumber} row{(rowNumber > 1 ? "s" : "")} and {columnNumber} column{(columnNumber > 1 ? "s" : "")}...");
             grid = new Grid(rowNumber, columnNumber);
         }
 
@@ -128,11 +128,11 @@ namespace AutoBattle
             {
                 int randomIndex = random.Next(0, grid.cells.Count);
                 GridCell RandomLocation = grid.cells.ElementAt(randomIndex);
-                if (!RandomLocation.occupied)
+                if (!RandomLocation.Occupied)
                 {
                     PlayerCharacter.currentCell = RandomLocation;
-                    RandomLocation.occupied = true;
-                    Console.Write($"{randomIndex}\n");
+                    RandomLocation.Occupied = true;
+                    Console.Write($"Player Characher placed at row {PlayerCharacter.currentCell.row} and column {PlayerCharacter.currentCell.column}\n");
                     return;
                 }
             } while (true);
@@ -144,11 +144,11 @@ namespace AutoBattle
             {
                 int randomIndex = random.Next(0, grid.cells.Count);
                 GridCell RandomLocation = grid.cells.ElementAt(randomIndex);
-                if (!RandomLocation.occupied)
+                if (!RandomLocation.Occupied)
                 {
                     EnemyCharacter.currentCell = RandomLocation;
-                    RandomLocation.occupied = true;
-                    Console.Write($"{randomIndex}\n");
+                    RandomLocation.Occupied = true;
+                    Console.Write($"Enemy Characher placed at row {PlayerCharacter.currentCell.row} and column {PlayerCharacter.currentCell.column}\n");
                     return;
                 }
             } while (true);
@@ -171,6 +171,7 @@ namespace AutoBattle
             foreach (Character character in AllCharacters)
             {
                 character.StartTurn(grid);
+                grid.DrawBattlefieldChanges();
             }
         }
 
