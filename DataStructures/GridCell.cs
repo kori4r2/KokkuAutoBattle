@@ -2,8 +2,8 @@ namespace AutoBattle
 {
     public class GridCell
     {
-        public int column;
-        public int row;
+        public int Column { get; private set; }
+        public int Row { get; private set; }
         private bool occupied;
         public bool Occupied
         {
@@ -16,15 +16,13 @@ namespace AutoBattle
                     OnStatusChanged?.Invoke();
             }
         }
-        public int Index;
         private event VoidEvent OnStatusChanged;
 
-        public GridCell(int x, int y, bool occupied, int index)
+        public GridCell(int x, int y, bool occupied)
         {
-            column = x;
-            row = y;
+            Column = x;
+            Row = y;
             this.occupied = occupied;
-            Index = index;
         }
 
         public void AddStatusChangeListener(VoidEvent callback)

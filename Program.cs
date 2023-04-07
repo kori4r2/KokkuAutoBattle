@@ -91,7 +91,7 @@ namespace AutoBattle
         {
             CharacterClass characterClass = (CharacterClass)classIndex;
             Console.WriteLine($"Player Class Choice: {characterClass}");
-            PlayerCharacter = new Character(characterClass);
+            PlayerCharacter = new Character();
             PlayerCharacter.Health = 100;
             PlayerCharacter.BaseDamage = 20;
             PlayerCharacter.PlayerIndex = 0;
@@ -103,7 +103,7 @@ namespace AutoBattle
             int randomInteger = random.Next(1, 4);
             CharacterClass enemyClass = (CharacterClass)randomInteger;
             Console.WriteLine($"Enemy Class Choice: {enemyClass}");
-            EnemyCharacter = new Character(enemyClass);
+            EnemyCharacter = new Character();
             EnemyCharacter.Health = 100;
             EnemyCharacter.BaseDamage = 20;
             EnemyCharacter.PlayerIndex = 1;
@@ -126,13 +126,13 @@ namespace AutoBattle
         {
             do
             {
-                int randomIndex = random.Next(0, grid.cells.Count);
-                GridCell RandomLocation = grid.cells.ElementAt(randomIndex);
+                int randomIndex = random.Next(0, grid.CellCount);
+                GridCell RandomLocation = grid.GetCellAtIndex(randomIndex);
                 if (!RandomLocation.Occupied)
                 {
                     PlayerCharacter.currentCell = RandomLocation;
                     RandomLocation.Occupied = true;
-                    Console.Write($"Player Characher placed at row {PlayerCharacter.currentCell.row} and column {PlayerCharacter.currentCell.column}\n");
+                    Console.Write($"Player Characher placed at row {PlayerCharacter.currentCell.Row} and column {PlayerCharacter.currentCell.Column}\n");
                     return;
                 }
             } while (true);
@@ -142,13 +142,13 @@ namespace AutoBattle
         {
             do
             {
-                int randomIndex = random.Next(0, grid.cells.Count);
-                GridCell RandomLocation = grid.cells.ElementAt(randomIndex);
+                int randomIndex = random.Next(0, grid.CellCount);
+                GridCell RandomLocation = grid.GetCellAtIndex(randomIndex);
                 if (!RandomLocation.Occupied)
                 {
                     EnemyCharacter.currentCell = RandomLocation;
                     RandomLocation.Occupied = true;
-                    Console.Write($"Enemy Characher placed at row {PlayerCharacter.currentCell.row} and column {PlayerCharacter.currentCell.column}\n");
+                    Console.Write($"Enemy Characher placed at row {PlayerCharacter.currentCell.Row} and column {PlayerCharacter.currentCell.Column}\n");
                     return;
                 }
             } while (true);

@@ -5,30 +5,36 @@ namespace AutoBattle
 {
     public class Grid
     {
-        public List<GridCell> cells = new List<GridCell>();
-        public int Rows;
-        public int Columns;
-        private bool changesDetected;
-        public Grid(int Rows, int Columns)
+        private List<GridCell> cells = new List<GridCell>();
+        public int Rows { get; private set; }
+        public int Columns { get; private set; }
+        public int CellCount => cells.Count;
+        private bool changesDetected = true;
+        public Grid(int rows, int columns)
         {
-            this.Rows = Rows;
-            this.Columns = Columns;
+            Rows = rows;
+            Columns = columns;
             changesDetected = true;
             Console.WriteLine("The battlefield has been created\n");
             for (int row = 0; row < Rows; row++)
             {
                 for (int column = 0; column < Columns; column++)
                 {
-                    CreateNewGridCell(Columns, row, column);
+                    CreateNewGridCell(column, row);
                 }
             }
         }
 
-        private void CreateNewGridCell(int Columns, int row, int column)
+        private void CreateNewGridCell(int column, int row)
         {
-            GridCell newCell = new GridCell(column, row, false, (Columns * row) + column);
+            GridCell newCell = new GridCell(column, row, false);
             newCell.AddStatusChangeListener(() => changesDetected = true);
             cells.Add(newCell);
+        }
+
+        public bool IsPositionValidAndOccupied(int column, int row)
+        {
+            return GetCellAtPosition(column, row)?.Occupied ?? false;
         }
 
         public GridCell GetCellAtPosition(int column, int row)
@@ -36,6 +42,11 @@ namespace AutoBattle
             if (row < 0 || row >= Rows || column < 0 || column >= Columns)
                 return null;
             return cells[(Columns * row) + column];
+        }
+
+        public GridCell GetCellAtIndex(int index)
+        {
+            return cells[index];
         }
 
         public void DrawBattlefieldChanges()

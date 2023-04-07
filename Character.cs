@@ -12,9 +12,6 @@ namespace AutoBattle
         public int PlayerIndex;
         public Character Target { get; set; } = null;
         private Random random = new Random();
-        public Character(CharacterClass characterClass)
-        {
-        }
 
         public bool TakeDamage(float amount)
         {
@@ -29,6 +26,7 @@ namespace AutoBattle
 
         public void Die()
         {
+            currentCell.Occupied = false;
             //TODO >> maybe kill him?
         }
 
@@ -44,62 +42,60 @@ namespace AutoBattle
             }
             else
             {   // if there is no target close enough, calculates in wich direction this character should move to be closer to a possible target
-                if (currentCell.column > Target.currentCell.column)
+                if (currentCell.Column > Target.currentCell.Column)
                 {
-                    if (currentCell.column > 0)
+                    if (currentCell.Column > 0)
                     {
                         currentCell.Occupied = false;
-                        currentCell = battlefield.GetCellAtPosition(currentCell.column - 1, currentCell.row);
+                        currentCell = battlefield.GetCellAtPosition(currentCell.Column - 1, currentCell.Row);
                         currentCell.Occupied = true;
-                        Console.WriteLine($"Player {PlayerIndex} walked right to row {currentCell.row} and column {currentCell.column}\n");
+                        Console.WriteLine($"Player {PlayerIndex} walked right to row {currentCell.Row} and column {currentCell.Column}\n");
                         return;
                     }
                 }
-                else if (currentCell.column < Target.currentCell.column)
+                else if (currentCell.Column < Target.currentCell.Column)
                 {
-                    if (currentCell.column < battlefield.Rows - 1)
+                    if (currentCell.Column < battlefield.Rows - 1)
                     {
                         currentCell.Occupied = false;
-                        currentCell = battlefield.GetCellAtPosition(currentCell.column + 1, currentCell.row);
+                        currentCell = battlefield.GetCellAtPosition(currentCell.Column + 1, currentCell.Row);
                         currentCell.Occupied = true;
-                        Console.WriteLine($"Player {PlayerIndex} walked left to row {currentCell.row} and column {currentCell.column}\n");
+                        Console.WriteLine($"Player {PlayerIndex} walked left to row {currentCell.Row} and column {currentCell.Column}\n");
                         return;
                     }
                 }
 
-                if (currentCell.row > Target.currentCell.row)
+                if (currentCell.Row > Target.currentCell.Row)
                 {
-                    if (currentCell.row > 0)
+                    if (currentCell.Row > 0)
                     {
                         currentCell.Occupied = false;
-                        currentCell = battlefield.GetCellAtPosition(currentCell.column, currentCell.row - 1);
+                        currentCell = battlefield.GetCellAtPosition(currentCell.Column, currentCell.Row - 1);
                         currentCell.Occupied = true;
-                        Console.WriteLine($"Player {PlayerIndex} walked up to row {currentCell.row} and column {currentCell.column}\n");
+                        Console.WriteLine($"Player {PlayerIndex} walked up to row {currentCell.Row} and column {currentCell.Column}\n");
                         return;
                     }
                 }
-                else if (currentCell.row < Target.currentCell.row)
+                else if (currentCell.Row < Target.currentCell.Row)
                 {
-                    if (currentCell.row < battlefield.Columns - 1)
+                    if (currentCell.Row < battlefield.Columns - 1)
                     {
                         currentCell.Occupied = false;
-                        currentCell = battlefield.GetCellAtPosition(currentCell.column, currentCell.row + 1);
+                        currentCell = battlefield.GetCellAtPosition(currentCell.Column, currentCell.Row + 1);
                         currentCell.Occupied = true;
-                        Console.WriteLine($"Player {PlayerIndex} walked down to row {currentCell.row} and column {currentCell.column}\n");
+                        Console.WriteLine($"Player {PlayerIndex} walked down to row {currentCell.Row} and column {currentCell.Column}\n");
                         return;
                     }
                 }
             }
         }
 
-        // Check in x and y directions if there is any character close enough to be a target.
         private bool CheckCloseTargets(Grid battlefield)
         {
-            bool left = battlefield.GetCellAtPosition(currentCell.column - 1, currentCell.row)?.Occupied ?? false;
-            bool right = battlefield.GetCellAtPosition(currentCell.column + 1, currentCell.row)?.Occupied ?? false;
-            bool down = battlefield.GetCellAtPosition(currentCell.column, currentCell.row + 1)?.Occupied ?? false;
-            bool up = battlefield.GetCellAtPosition(currentCell.column, currentCell.row - 1)?.Occupied ?? false;
-            return left || right || up || down;
+            return battlefield.IsPositionValidAndOccupied(currentCell.Column - 1, currentCell.Row)
+                || battlefield.IsPositionValidAndOccupied(currentCell.Column + 1, currentCell.Row)
+                || battlefield.IsPositionValidAndOccupied(currentCell.Column, currentCell.Row + 1)
+                || battlefield.IsPositionValidAndOccupied(currentCell.Column, currentCell.Row - 1);
         }
 
         public void Attack(Character target)
