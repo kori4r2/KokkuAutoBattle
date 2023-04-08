@@ -43,6 +43,7 @@ namespace AutoBattle
         {
             CurrentCell.Vacate();
             Console.WriteLine($"{Name} has died");
+            Console.WriteLine();
         }
 
         public void StartTurn(Grid battlefield, ReadOnlyCollection<Character> characters)
@@ -90,7 +91,6 @@ namespace AutoBattle
             Console.WriteLine($"BaseDamage = {BaseDamage}, rolled {calculatedDamage}");
             Console.WriteLine($"{Name} is attacking {Target.Name} for {calculatedDamage} damage");
             target.TakeDamage(calculatedDamage);
-            Console.WriteLine(Environment.NewLine);
         }
 
         protected void MoveTowardsTarget(Grid battlefield)

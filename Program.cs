@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace AutoBattle
 {
@@ -22,6 +22,7 @@ namespace AutoBattle
         {
             CreateGrid();
             CreateCharacters();
+            Console.WriteLine(Environment.NewLine);
             grid.DrawBattlefieldChanges();
         }
 
@@ -30,10 +31,10 @@ namespace AutoBattle
             int numberParsed;
             int rowNumber;
             int columnNumber;
-            Console.WriteLine($"Choose number of rows for the grid [{minGridSize}-{maxGridSize}]: ");
+            Console.Write($"Choose number of rows for the grid [{minGridSize}-{maxGridSize}]: ");
             numberParsed = ReadValidNumberFromConsole();
             rowNumber = Math.Clamp(numberParsed, minGridSize, maxGridSize);
-            Console.WriteLine($"Choose number of columns for the grid [{minGridSize}-{maxGridSize}]: ");
+            Console.Write($"Choose number of columns for the grid [{minGridSize}-{maxGridSize}]: ");
             numberParsed = ReadValidNumberFromConsole();
             columnNumber = Math.Clamp(numberParsed, minGridSize, maxGridSize);
             Console.WriteLine($"Creating grid with {rowNumber} row{(rowNumber > 1 ? "s" : "")} and {columnNumber} column{(columnNumber > 1 ? "s" : "")}...");
@@ -46,7 +47,7 @@ namespace AutoBattle
             string lineRead = Console.ReadLine();
             while (!int.TryParse(lineRead, out numberParsed))
             {
-                Console.WriteLine("Please input a valid number: ");
+                Console.Write("Please input a valid number: ");
                 lineRead = Console.ReadLine();
             }
             return numberParsed;
@@ -66,7 +67,7 @@ namespace AutoBattle
             int maxTeamSize = Math.Max(minTeamSize, grid.CellCount / 4);
             if (maxTeamSize > teamSize)
             {
-                Console.WriteLine($"Choose team size [{minTeamSize}-{maxTeamSize}]: ");
+                Console.Write($"Choose team size [{minTeamSize}-{maxTeamSize}]: ");
                 teamSize = ReadValidNumberFromConsole();
                 teamSize = Math.Clamp(teamSize, minTeamSize, maxTeamSize);
             }
@@ -114,7 +115,6 @@ namespace AutoBattle
                     continue;
                 Console.WriteLine();
                 Console.WriteLine("Click on any key to start the next unit's turn...\n");
-                Console.WriteLine();
                 Console.ReadKey();
                 character.StartTurn(grid, characterList.Characters);
                 grid.DrawBattlefieldChanges();

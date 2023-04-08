@@ -98,9 +98,8 @@ namespace AutoBattle
                     GridCell currentCell = cells[(Columns * row) + column];
                     Console.Write($"[{currentCell.DisplayCharacter}]\t");
                 }
-                Console.Write(Environment.NewLine + Environment.NewLine);
+                Console.WriteLine(Environment.NewLine);
             }
-            Console.Write(Environment.NewLine + Environment.NewLine);
             changesDetected = false;
         }
     }
