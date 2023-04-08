@@ -96,7 +96,7 @@ namespace AutoBattle
                 for (int column = 0; column < Columns; column++)
                 {
                     GridCell currentCell = cells[(Columns * row) + column];
-                    Console.Write($"[{(currentCell.Occupied ? "X" : " ")}]\t");
+                    Console.Write($"[{currentCell.DisplayCharacter}]\t");
                 }
                 Console.Write(Environment.NewLine + Environment.NewLine);
             }

@@ -5,12 +5,14 @@ namespace AutoBattle
 {
     public abstract class Character
     {
-        public string Name { get; set; }
+        public string Name => $"{Team}{MyClass}({CharacterIndex})";
         public float Health { get; protected set; } = 0;
         public float BaseDamage { get; protected set; } = 0;
         public float DamageMultiplier { get; protected set; } = 1;
         public GridCell CurrentCell { get; protected set; } = null;
         public int CharacterIndex { get; protected set; }
+        protected char DisplayChar => Team == CharacterTeam.Player ? 'P' : Team == CharacterTeam.Enemy ? 'E' : 'X';
+        protected abstract CharacterClass MyClass { get; }
         public CharacterTeam Team { get; protected set; }
         public Character Target { get; set; } = null;
         protected Random random = new Random();
@@ -20,7 +22,7 @@ namespace AutoBattle
             Team = team;
             CharacterIndex = index;
             CurrentCell = startingPosition;
-            CurrentCell.Occupied = true;
+            CurrentCell.Occupy(DisplayChar);
             SetBaseStats();
         }
 
@@ -39,8 +41,8 @@ namespace AutoBattle
 
         public void Die()
         {
-            CurrentCell.Occupied = false;
-            Console.WriteLine($"Player {CharacterIndex} has died");
+            CurrentCell.Vacate();
+            Console.WriteLine($"{Name} has died");
         }
 
         public void StartTurn(Grid battlefield, ReadOnlyCollection<Character> characters)
@@ -81,8 +83,8 @@ namespace AutoBattle
             if (target.Health <= 0)
                 return;
             float calculatedDamage = random.Next(0, (int)BaseDamage);
-            Console.WriteLine($"BaseDamage = {BaseDamage}, rolled for {calculatedDamage}");
-            Console.WriteLine($"Player {CharacterIndex} is attacking the player {Target.CharacterIndex} and did {calculatedDamage} damage");
+            Console.WriteLine($"BaseDamage = {BaseDamage}, rolled {calculatedDamage}");
+            Console.WriteLine($"{Name} is attacking {Target.Name} for {calculatedDamage} damage");
             target.TakeDamage(calculatedDamage);
             Console.WriteLine(Environment.NewLine);
         }
@@ -117,7 +119,7 @@ namespace AutoBattle
 
         private void LogMovement(string directionString)
         {
-            Console.WriteLine($"Player {CharacterIndex} walked {directionString} to row {CurrentCell.Row} and column {CurrentCell.Column}\n");
+            Console.WriteLine($"{Name} walked {directionString} to row {CurrentCell.Row} and column {CurrentCell.Column}\n");
         }
 
         private bool ShouldMoveRight(Grid battlefield)
@@ -146,9 +148,9 @@ namespace AutoBattle
 
         private void MoveToPosition(Grid battlefield, int column, int row)
         {
-            CurrentCell.Occupied = false;
+            CurrentCell.Vacate();
             CurrentCell = battlefield.GetCellAtPosition(column, row);
-            CurrentCell.Occupied = true;
+            CurrentCell.Occupy(DisplayChar);
         }
     }
 }

@@ -5,6 +5,8 @@ namespace AutoBattle
         public Cleric(GridCell startingPosition, CharacterTeam team, int index)
         : base(startingPosition, team, index) { }
 
+        protected override CharacterClass MyClass => CharacterClass.Cleric;
+
         protected override void SetBaseStats()
         {
             Health = 100;

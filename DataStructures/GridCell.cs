@@ -4,11 +4,13 @@ namespace AutoBattle
     {
         public int Column { get; private set; }
         public int Row { get; private set; }
+        private char occupantChar = ' ';
+        public char DisplayCharacter => Occupied ? occupantChar : ' ';
         private bool occupied;
         public bool Occupied
         {
             get => occupied;
-            set
+            private set
             {
                 bool shouldCallback = value != occupied;
                 occupied = value;
@@ -23,6 +25,17 @@ namespace AutoBattle
             Column = x;
             Row = y;
             this.occupied = occupied;
+        }
+
+        public void Occupy(char displayChar)
+        {
+            occupantChar = displayChar;
+            Occupied = true;
+        }
+
+        public void Vacate()
+        {
+            Occupied = false;
         }
 
         public void AddStatusChangeListener(GridCellEvent callback)
