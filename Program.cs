@@ -12,6 +12,7 @@ namespace AutoBattle
         private CharacterFactory characterFactory = new CharacterFactory();
         private List<Character> AllCharacters = new List<Character>();
         private ReadOnlyCollection<Character> ReadOnlyCharacterList;
+        private ClassesInfo classesInfo = new ClassesInfo();
         private Random random = new Random();
 
         private static void Main()
@@ -24,9 +25,7 @@ namespace AutoBattle
         private void Setup()
         {
             CreateGrid();
-            GetAndCreatePlayerCharacter();
-            CreateEnemyCharacter();
-            ReadOnlyCharacterList = AllCharacters.AsReadOnly();
+            CreateCharacters();
             grid.DrawBattlefieldChanges();
         }
 
@@ -57,42 +56,31 @@ namespace AutoBattle
             return numberParsed;
         }
 
-        private void GetAndCreatePlayerCharacter()
+        private void CreateCharacters()
         {
-            bool playerCharacterCreated = false;
+            CharacterClass playerCharacterClass = ReadPlayerCharacterClass();
+            CreatePlayerCharacter(playerCharacterClass);
+            CreateEnemyCharacter(classesInfo.GetRandomClass());
+            ReadOnlyCharacterList = AllCharacters.AsReadOnly();
+        }
+
+        private CharacterClass ReadPlayerCharacterClass()
+        {
             do
             {
                 Console.WriteLine("Choose Between One of these Classes:\n");
-                Console.WriteLine($"[1] Paladin, [2] Warrior, [3] Cleric, [4] Archer");
+                Console.WriteLine(classesInfo.GetReadableClassList(", "));
                 string choice = Console.ReadLine();
-                switch (choice)
-                {
-                    case "1":
-                        CreatePlayerCharacter(int.Parse(choice));
-                        playerCharacterCreated = true;
-                        break;
-                    case "2":
-                        CreatePlayerCharacter(int.Parse(choice));
-                        playerCharacterCreated = true;
-                        break;
-                    case "3":
-                        CreatePlayerCharacter(int.Parse(choice));
-                        playerCharacterCreated = true;
-                        break;
-                    case "4":
-                        CreatePlayerCharacter(int.Parse(choice));
-                        playerCharacterCreated = true;
-                        break;
-                }
-            } while (!playerCharacterCreated);
+                if (classesInfo.IsValidClassString(choice))
+                    return classesInfo.ParseValidString(choice);
+            } while (true);
         }
 
-        private void CreatePlayerCharacter(int classIndex)
+        private void CreatePlayerCharacter(CharacterClass playerClass)
         {
-            CharacterClass characterClass = (CharacterClass)classIndex;
-            Console.WriteLine($"Player Class Choice: {characterClass}");
+            Console.WriteLine($"Player Class Choice: {playerClass}");
             GridCell emptyCell = FindEmptyPosition();
-            PlayerCharacter = characterFactory.CreatePlayerCharacter(characterClass, emptyCell);
+            PlayerCharacter = characterFactory.CreatePlayerCharacter(playerClass, emptyCell);
             AllCharacters.Add(PlayerCharacter);
             Console.Write($"Player Characher placed at row {PlayerCharacter.CurrentCell.Row} and column {PlayerCharacter.CurrentCell.Column}\n");
         }
@@ -108,11 +96,8 @@ namespace AutoBattle
             } while (true);
         }
 
-        private void CreateEnemyCharacter()
+        private void CreateEnemyCharacter(CharacterClass enemyClass)
         {
-            //randomly choose the enemy class and set up vital variables
-            int randomInteger = random.Next(1, 4);
-            CharacterClass enemyClass = (CharacterClass)randomInteger;
             Console.WriteLine($"Enemy Class Choice: {enemyClass}");
             GridCell emptyCell = FindEmptyPosition();
             EnemyCharacter = characterFactory.CreateEnemyCharacter(enemyClass, emptyCell);
@@ -146,13 +131,15 @@ namespace AutoBattle
             if (PlayerCharacter.Health <= 0)
             {
                 Console.Write(Environment.NewLine + Environment.NewLine);
-                Console.WriteLine("Game Over, Player Character has died");
+                Console.WriteLine("Player Character has died, Defeat...");
+                Console.Write(Environment.NewLine);
                 return true;
             }
             else if (EnemyCharacter.Health <= 0)
             {
                 Console.Write(Environment.NewLine + Environment.NewLine);
-                Console.WriteLine("Game Over, Enemy Character has died");
+                Console.WriteLine("Enemy Character has died, Victory!");
+                Console.Write(Environment.NewLine);
                 return true;
             }
             return false;
