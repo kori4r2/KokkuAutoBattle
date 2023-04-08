@@ -48,19 +48,19 @@ namespace AutoBattle
             if (Health <= 0)
                 return;
 
-            TargetClosestEnemy(characters);
+            TargetClosestEnemyAlive(characters);
             if (DistanceToCharacter(Target) < 2)
                 Attack(Target);
             else
                 MoveTowardsTarget(battlefield);
         }
 
-        protected void TargetClosestEnemy(ReadOnlyCollection<Character> characterList)
+        protected void TargetClosestEnemyAlive(ReadOnlyCollection<Character> characterList)
         {
             int closestDistance = int.MaxValue;
             foreach (Character character in characterList)
             {
-                if (character.Team == Team)
+                if (character.Team == Team || character.Health <= 0)
                     continue;
                 int distance = DistanceToCharacter(character);
                 if (distance < closestDistance)
@@ -78,6 +78,8 @@ namespace AutoBattle
 
         protected void Attack(Character target)
         {
+            if (target.Health <= 0)
+                return;
             float calculatedDamage = random.Next(0, (int)BaseDamage);
             Console.WriteLine($"BaseDamage = {BaseDamage}, rolled for {calculatedDamage}");
             Console.WriteLine($"Player {CharacterIndex} is attacking the player {Target.CharacterIndex} and did {calculatedDamage} damage");
