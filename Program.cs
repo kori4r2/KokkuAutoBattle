@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace AutoBattle
 {
@@ -64,11 +64,11 @@ namespace AutoBattle
         {
             int teamSize = minTeamSize;
             int maxTeamSize = Math.Max(minTeamSize, grid.CellCount / 4);
-            if (maxTeamSize > minGridSize)
+            if (maxTeamSize > teamSize)
             {
                 Console.WriteLine($"Choose team size [{minTeamSize}-{maxTeamSize}]: ");
                 teamSize = ReadValidNumberFromConsole();
-                teamSize = Math.Clamp(teamSize, minGridSize, maxTeamSize);
+                teamSize = Math.Clamp(teamSize, minTeamSize, maxTeamSize);
             }
             Console.WriteLine($"Using team size of {teamSize}");
             return teamSize;
