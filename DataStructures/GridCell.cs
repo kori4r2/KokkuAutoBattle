@@ -13,10 +13,10 @@ namespace AutoBattle
                 bool shouldCallback = value != occupied;
                 occupied = value;
                 if (shouldCallback)
-                    OnStatusChanged?.Invoke();
+                    OnStatusChanged?.Invoke(this);
             }
         }
-        private event VoidEvent OnStatusChanged;
+        private event GridCellEvent OnStatusChanged;
 
         public GridCell(int x, int y, bool occupied)
         {
@@ -25,7 +25,7 @@ namespace AutoBattle
             this.occupied = occupied;
         }
 
-        public void AddStatusChangeListener(VoidEvent callback)
+        public void AddStatusChangeListener(GridCellEvent callback)
         {
             OnStatusChanged += callback;
         }

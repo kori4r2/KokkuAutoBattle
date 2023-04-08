@@ -13,7 +13,6 @@ namespace AutoBattle
         private List<Character> AllCharacters = new List<Character>();
         private ReadOnlyCollection<Character> ReadOnlyCharacterList;
         private ClassesInfo classesInfo = new ClassesInfo();
-        private Random random = new Random();
 
         private static void Main()
         {
@@ -79,27 +78,16 @@ namespace AutoBattle
         private void CreatePlayerCharacter(CharacterClass playerClass)
         {
             Console.WriteLine($"Player Class Choice: {playerClass}");
-            GridCell emptyCell = FindEmptyPosition();
+            GridCell emptyCell = grid.FindEmptyPosition();
             PlayerCharacter = characterFactory.CreatePlayerCharacter(playerClass, emptyCell);
             AllCharacters.Add(PlayerCharacter);
             Console.Write($"Player Characher placed at row {PlayerCharacter.CurrentCell.Row} and column {PlayerCharacter.CurrentCell.Column}\n");
         }
 
-        private GridCell FindEmptyPosition()
-        {
-            do
-            {
-                int randomIndex = random.Next(0, grid.CellCount);
-                GridCell RandomLocation = grid.GetCellAtIndex(randomIndex);
-                if (!RandomLocation.Occupied)
-                    return RandomLocation;
-            } while (true);
-        }
-
         private void CreateEnemyCharacter(CharacterClass enemyClass)
         {
             Console.WriteLine($"Enemy Class Choice: {enemyClass}");
-            GridCell emptyCell = FindEmptyPosition();
+            GridCell emptyCell = grid.FindEmptyPosition();
             EnemyCharacter = characterFactory.CreateEnemyCharacter(enemyClass, emptyCell);
             AllCharacters.Add(EnemyCharacter);
             Console.Write($"Enemy Characher placed at row {EnemyCharacter.CurrentCell.Row} and column {EnemyCharacter.CurrentCell.Column}\n");

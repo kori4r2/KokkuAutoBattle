@@ -6,10 +6,13 @@ namespace AutoBattle
     public class Grid
     {
         private List<GridCell> cells = new List<GridCell>();
+        private List<GridCell> freeCells = new List<GridCell>();
         public int Rows { get; private set; }
         public int Columns { get; private set; }
         public int CellCount => cells.Count;
         private bool changesDetected = true;
+        private Random random = new Random();
+
         public Grid(int rows, int columns)
         {
             Rows = rows;
@@ -23,13 +26,48 @@ namespace AutoBattle
                     CreateNewGridCell(column, row);
                 }
             }
+            freeCells.AddRange(cells);
         }
 
         private void CreateNewGridCell(int column, int row)
         {
             GridCell newCell = new GridCell(column, row, false);
-            newCell.AddStatusChangeListener(() => changesDetected = true);
+            newCell.AddStatusChangeListener(GridCellStatusChanged);
             cells.Add(newCell);
+        }
+
+        private void GridCellStatusChanged(GridCell cell)
+        {
+            changesDetected = true;
+            if (cell.Occupied)
+                freeCells.Remove(cell);
+            else
+                freeCells.Add(cell);
+        }
+
+        public GridCell FindEmptyPosition()
+        {
+            int[] indexArray = GenerateIndexArray();
+            for (int attempt = 0; attempt < freeCells.Count; attempt++)
+            {
+                int randomResult = random.Next(0, freeCells.Count - attempt);
+                int cellIndex = indexArray[randomResult];
+                if (!freeCells[cellIndex].Occupied)
+                    return freeCells[cellIndex];
+                indexArray[randomResult] = indexArray[freeCells.Count - 1 - attempt];
+                indexArray[freeCells.Count - 1 - attempt] = cellIndex;
+            }
+            throw new IndexOutOfRangeException("No free spaces available in the grid");
+        }
+
+        private int[] GenerateIndexArray()
+        {
+            int[] indexArray = new int[freeCells.Count];
+            for (int index = 0; index < freeCells.Count; index++)
+            {
+                indexArray[index] = index;
+            }
+            return indexArray;
         }
 
         public bool IsPositionValidAndVacant(int column, int row)
