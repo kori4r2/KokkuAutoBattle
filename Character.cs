@@ -13,7 +13,7 @@ namespace AutoBattle
         public int CharacterIndex { get; protected set; }
         public CharacterTeam Team { get; protected set; }
         public Character Target { get; set; } = null;
-        private Random random = new Random();
+        protected Random random = new Random();
 
         protected Character(GridCell startingPosition, CharacterTeam team, int index)
         {
@@ -47,14 +47,14 @@ namespace AutoBattle
             if (Health <= 0)
                 return;
 
-            FindClosestTarget(characters);
+            TargetClosestEnemy(characters);
             if (IsAdjacentToTarget(battlefield))
                 Attack(Target);
             else
                 MoveTowardsTarget(battlefield);
         }
 
-        protected void FindClosestTarget(ReadOnlyCollection<Character> characterList)
+        protected void TargetClosestEnemy(ReadOnlyCollection<Character> characterList)
         {
             int closestDistance = int.MaxValue;
             foreach (Character character in characterList)
@@ -93,27 +93,32 @@ namespace AutoBattle
             if (ShouldMoveRight(battlefield))
             {
                 MoveToPosition(battlefield, CurrentCell.Column - 1, CurrentCell.Row);
-                Console.WriteLine($"Player {CharacterIndex} walked right to row {CurrentCell.Row} and column {CurrentCell.Column}\n");
+                LogMovement("right");
                 return;
             }
             if (ShouldMoveLeft(battlefield))
             {
                 MoveToPosition(battlefield, CurrentCell.Column + 1, CurrentCell.Row);
-                Console.WriteLine($"Player {CharacterIndex} walked left to row {CurrentCell.Row} and column {CurrentCell.Column}\n");
+                LogMovement("left");
                 return;
             }
             if (ShouldMoveUp(battlefield))
             {
                 MoveToPosition(battlefield, CurrentCell.Column, CurrentCell.Row - 1);
-                Console.WriteLine($"Player {CharacterIndex} walked up to row {CurrentCell.Row} and column {CurrentCell.Column}\n");
+                LogMovement("up");
                 return;
             }
             if (ShouldMoveDown(battlefield))
             {
                 MoveToPosition(battlefield, CurrentCell.Column, CurrentCell.Row + 1);
-                Console.WriteLine($"Player {CharacterIndex} walked down to row {CurrentCell.Row} and column {CurrentCell.Column}\n");
+                LogMovement("down");
                 return;
             }
+        }
+
+        private void LogMovement(string directionString)
+        {
+            Console.WriteLine($"Player {CharacterIndex} walked {directionString} to row {CurrentCell.Row} and column {CurrentCell.Column}\n");
         }
 
         private bool ShouldMoveRight(Grid battlefield)
