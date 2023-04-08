@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace AutoBattle
 {
     internal class Program
     {
         private Grid grid;
-        private Character PlayerCharacter;
-        private Character EnemyCharacter;
-        private CharacterFactory characterFactory = new CharacterFactory();
-        private List<Character> AllCharacters = new List<Character>();
-        private ReadOnlyCollection<Character> ReadOnlyCharacterList;
         private ClassesInfo classesInfo = new ClassesInfo();
+        private CharacterListManager characterList = new CharacterListManager();
 
         private static void Main()
         {
@@ -57,10 +51,8 @@ namespace AutoBattle
 
         private void CreateCharacters()
         {
-            CharacterClass playerCharacterClass = ReadPlayerCharacterClass();
-            CreatePlayerCharacter(playerCharacterClass);
-            CreateEnemyCharacter(classesInfo.GetRandomClass());
-            ReadOnlyCharacterList = AllCharacters.AsReadOnly();
+            characterList.CreatePlayerCharacter(ReadPlayerCharacterClass(), grid.FindEmptyPosition());
+            characterList.CreateEnemyCharacter(classesInfo.GetRandomClass(), grid.FindEmptyPosition());
         }
 
         private CharacterClass ReadPlayerCharacterClass()
@@ -73,24 +65,6 @@ namespace AutoBattle
                 if (classesInfo.IsValidClassString(choice))
                     return classesInfo.ParseValidString(choice);
             } while (true);
-        }
-
-        private void CreatePlayerCharacter(CharacterClass playerClass)
-        {
-            Console.WriteLine($"Player Class Choice: {playerClass}");
-            GridCell emptyCell = grid.FindEmptyPosition();
-            PlayerCharacter = characterFactory.CreatePlayerCharacter(playerClass, emptyCell);
-            AllCharacters.Add(PlayerCharacter);
-            Console.Write($"Player Characher placed at row {PlayerCharacter.CurrentCell.Row} and column {PlayerCharacter.CurrentCell.Column}\n");
-        }
-
-        private void CreateEnemyCharacter(CharacterClass enemyClass)
-        {
-            Console.WriteLine($"Enemy Class Choice: {enemyClass}");
-            GridCell emptyCell = grid.FindEmptyPosition();
-            EnemyCharacter = characterFactory.CreateEnemyCharacter(enemyClass, emptyCell);
-            AllCharacters.Add(EnemyCharacter);
-            Console.Write($"Enemy Characher placed at row {EnemyCharacter.CurrentCell.Row} and column {EnemyCharacter.CurrentCell.Column}\n");
         }
 
         public void StartGame()
@@ -107,26 +81,26 @@ namespace AutoBattle
 
         private void StartCharacterTurns()
         {
-            foreach (Character character in AllCharacters)
+            foreach (Character character in characterList.Characters)
             {
-                character.StartTurn(grid, ReadOnlyCharacterList);
+                character.StartTurn(grid, characterList.Characters);
                 grid.DrawBattlefieldChanges();
             }
         }
 
         private bool CheckGameEnd()
         {
-            if (PlayerCharacter.Health <= 0)
+            if (!characterList.EnemyHasUnitsAlive)
             {
                 Console.Write(Environment.NewLine + Environment.NewLine);
-                Console.WriteLine("Player Character has died, Defeat...");
+                Console.WriteLine("Enemy has no units alive, Victory!");
                 Console.Write(Environment.NewLine);
                 return true;
             }
-            else if (EnemyCharacter.Health <= 0)
+            else if (!characterList.PlayerHasUnitsAlive)
             {
                 Console.Write(Environment.NewLine + Environment.NewLine);
-                Console.WriteLine("Enemy Character has died, Victory!");
+                Console.WriteLine("Player has no units alive, Defeat...");
                 Console.Write(Environment.NewLine);
                 return true;
             }
