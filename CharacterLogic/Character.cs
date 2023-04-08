@@ -50,6 +50,7 @@ namespace AutoBattle
             if (Health <= 0)
                 return;
 
+            Console.WriteLine($"{Name} turn started");
             TargetClosestEnemyAlive(characters);
             if (DistanceToCharacter(Target) < 2)
                 Attack(Target);
@@ -81,7 +82,10 @@ namespace AutoBattle
         protected void Attack(Character target)
         {
             if (target.Health <= 0)
+            {
+                Console.WriteLine($"Target is dead, nothing to do");
                 return;
+            }
             float calculatedDamage = random.Next(0, (int)BaseDamage);
             Console.WriteLine($"BaseDamage = {BaseDamage}, rolled {calculatedDamage}");
             Console.WriteLine($"{Name} is attacking {Target.Name} for {calculatedDamage} damage");
@@ -115,6 +119,7 @@ namespace AutoBattle
                 LogMovement("down");
                 return;
             }
+            Console.WriteLine($"Path to target is blocked");
         }
 
         private void LogMovement(string directionString)

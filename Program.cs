@@ -4,6 +4,9 @@ namespace AutoBattle
 {
     internal class Program
     {
+        private const int minTeamSize = 1;
+        private const int minGridSize = 2;
+        private const int maxGridSize = 50;
         private Grid grid;
         private ClassesInfo classesInfo = new ClassesInfo();
         private CharacterListManager characterList = new CharacterListManager();
@@ -27,12 +30,12 @@ namespace AutoBattle
             int numberParsed;
             int rowNumber;
             int columnNumber;
-            Console.WriteLine("Choose number of rows for the grid [2-999999]: ");
+            Console.WriteLine($"Choose number of rows for the grid [{minGridSize}-{maxGridSize}]: ");
             numberParsed = ReadValidNumberFromConsole();
-            rowNumber = Math.Clamp(numberParsed, 2, 999999);
-            Console.WriteLine("Choose number of columns for the grid [2-999999]: ");
+            rowNumber = Math.Clamp(numberParsed, minGridSize, maxGridSize);
+            Console.WriteLine($"Choose number of columns for the grid [{minGridSize}-{maxGridSize}]: ");
             numberParsed = ReadValidNumberFromConsole();
-            columnNumber = Math.Clamp(numberParsed, 2, 999999);
+            columnNumber = Math.Clamp(numberParsed, minGridSize, maxGridSize);
             Console.WriteLine($"Creating grid with {rowNumber} row{(rowNumber > 1 ? "s" : "")} and {columnNumber} column{(columnNumber > 1 ? "s" : "")}...");
             grid = new Grid(rowNumber, columnNumber);
         }
@@ -51,16 +54,37 @@ namespace AutoBattle
 
         private void CreateCharacters()
         {
-            characterList.CreatePlayerCharacter(ReadPlayerCharacterClass(), grid.FindEmptyPosition());
-            characterList.CreateEnemyCharacter(classesInfo.GetRandomClass(), grid.FindEmptyPosition());
+            int teamSize = GetTeamSize();
+            CreatePlayerTeam(teamSize);
+            CreateEnemyTeam(teamSize);
             characterList.ShuffleList();
+        }
+
+        private int GetTeamSize()
+        {
+            int teamSize = minTeamSize;
+            int maxTeamSize = Math.Max(minTeamSize, grid.CellCount / 4);
+            if (maxTeamSize > minGridSize)
+            {
+                Console.WriteLine($"Choose team size [{minTeamSize}-{maxTeamSize}]: ");
+                teamSize = ReadValidNumberFromConsole();
+                teamSize = Math.Clamp(teamSize, minGridSize, maxTeamSize);
+            }
+            Console.WriteLine($"Using team size of {teamSize}");
+            return teamSize;
+        }
+
+        private void CreatePlayerTeam(int teamSize)
+        {
+            for (int count = 0; count < teamSize; count++)
+                characterList.CreatePlayerCharacter(ReadPlayerCharacterClass(), grid.FindEmptyPosition());
         }
 
         private CharacterClass ReadPlayerCharacterClass()
         {
             do
             {
-                Console.WriteLine("Choose Between One of these Classes:\n");
+                Console.WriteLine("Choose Between One of these Classes:");
                 Console.WriteLine(classesInfo.GetReadableClassList(", "));
                 string choice = Console.ReadLine();
                 if (classesInfo.IsValidClassString(choice))
@@ -68,14 +92,16 @@ namespace AutoBattle
             } while (true);
         }
 
+        private void CreateEnemyTeam(int teamSize)
+        {
+            for (int count = 0; count < teamSize; count++)
+                characterList.CreateEnemyCharacter(classesInfo.GetRandomClass(), grid.FindEmptyPosition());
+        }
+
         public void StartGame()
         {
             do
             {
-                Console.Write(Environment.NewLine + Environment.NewLine);
-                Console.WriteLine("Click on any key to start the next turn...\n");
-                Console.Write(Environment.NewLine + Environment.NewLine);
-                Console.ReadKey();
                 StartCharacterTurns();
             } while (!CheckGameEnd());
         }
@@ -84,6 +110,12 @@ namespace AutoBattle
         {
             foreach (Character character in characterList.Characters)
             {
+                if (character.Health <= 0)
+                    continue;
+                Console.WriteLine();
+                Console.WriteLine("Click on any key to start the next unit's turn...\n");
+                Console.WriteLine();
+                Console.ReadKey();
                 character.StartTurn(grid, characterList.Characters);
                 grid.DrawBattlefieldChanges();
             }
@@ -91,18 +123,18 @@ namespace AutoBattle
 
         private bool CheckGameEnd()
         {
-            if (!characterList.EnemyHasUnitsAlive)
+            if (!characterList.EnemyHasUnitsAlive())
             {
-                Console.Write(Environment.NewLine + Environment.NewLine);
+                Console.WriteLine(Environment.NewLine);
                 Console.WriteLine("Enemy has no units alive, Victory!");
-                Console.Write(Environment.NewLine);
+                Console.WriteLine();
                 return true;
             }
-            else if (!characterList.PlayerHasUnitsAlive)
+            else if (!characterList.PlayerHasUnitsAlive())
             {
-                Console.Write(Environment.NewLine + Environment.NewLine);
+                Console.WriteLine(Environment.NewLine);
                 Console.WriteLine("Player has no units alive, Defeat...");
-                Console.Write(Environment.NewLine);
+                Console.WriteLine();
                 return true;
             }
             return false;

@@ -7,10 +7,26 @@ namespace AutoBattle
 {
     public class CharacterListManager
     {
-        private Character PlayerCharacter;
-        public bool PlayerHasUnitsAlive => PlayerCharacter.Health > 0;
-        private Character EnemyCharacter;
-        public bool EnemyHasUnitsAlive => EnemyCharacter.Health > 0;
+        private List<Character> playerCharacters = new List<Character>();
+        public bool PlayerHasUnitsAlive()
+        {
+            foreach (Character character in playerCharacters)
+            {
+                if (character.Health > 0)
+                    return true;
+            }
+            return false;
+        }
+        private List<Character> enemyCharacters = new List<Character>();
+        public bool EnemyHasUnitsAlive()
+        {
+            foreach (Character character in enemyCharacters)
+            {
+                if (character.Health > 0)
+                    return true;
+            }
+            return false;
+        }
         private CharacterFactory characterFactory = new CharacterFactory();
         private List<Character> allCharacters = new List<Character>();
         public ReadOnlyCollection<Character> Characters => allCharacters.AsReadOnly();
@@ -19,17 +35,19 @@ namespace AutoBattle
         public void CreatePlayerCharacter(CharacterClass playerClass, GridCell startingPosition)
         {
             Console.WriteLine($"Player Class Choice: {playerClass}");
-            PlayerCharacter = characterFactory.CreatePlayerCharacter(playerClass, startingPosition);
-            allCharacters.Add(PlayerCharacter);
-            Console.Write($"Player Characher placed at row {PlayerCharacter.CurrentCell.Row} and column {PlayerCharacter.CurrentCell.Column}\n");
+            Character newPlayerCharater = characterFactory.CreatePlayerCharacter(playerClass, startingPosition);
+            playerCharacters.Add(newPlayerCharater);
+            allCharacters.Add(newPlayerCharater);
+            Console.Write($"Player Character placed at row {newPlayerCharater.CurrentCell.Row} and column {newPlayerCharater.CurrentCell.Column}\n");
         }
 
         public void CreateEnemyCharacter(CharacterClass enemyClass, GridCell startingPosition)
         {
             Console.WriteLine($"Enemy Class Choice: {enemyClass}");
-            EnemyCharacter = characterFactory.CreateEnemyCharacter(enemyClass, startingPosition);
-            allCharacters.Add(EnemyCharacter);
-            Console.Write($"Enemy Characher placed at row {EnemyCharacter.CurrentCell.Row} and column {EnemyCharacter.CurrentCell.Column}\n");
+            Character newEnemyCharacter = characterFactory.CreateEnemyCharacter(enemyClass, startingPosition);
+            enemyCharacters.Add(newEnemyCharacter);
+            allCharacters.Add(newEnemyCharacter);
+            Console.Write($"Enemy Character placed at row {newEnemyCharacter.CurrentCell.Row} and column {newEnemyCharacter.CurrentCell.Column}\n");
         }
 
         public void ShuffleList()
