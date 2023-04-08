@@ -4,8 +4,6 @@ namespace AutoBattle
     {
         public int Column { get; private set; }
         public int Row { get; private set; }
-        private char occupantChar = ' ';
-        public char DisplayCharacter => Occupied ? occupantChar : ' ';
         private bool occupied;
         public bool Occupied
         {
@@ -18,12 +16,14 @@ namespace AutoBattle
                     OnStatusChanged?.Invoke(this);
             }
         }
+        private char occupantChar = ' ';
+        public char DisplayCharacter => Occupied ? occupantChar : ' ';
         private event GridCellEvent OnStatusChanged;
 
-        public GridCell(int x, int y, bool occupied)
+        public GridCell(int column, int row, bool occupied)
         {
-            Column = x;
-            Row = y;
+            Column = column;
+            Row = row;
             this.occupied = occupied;
         }
 

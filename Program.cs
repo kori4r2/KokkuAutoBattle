@@ -64,6 +64,7 @@ namespace AutoBattle
         private int GetTeamSize()
         {
             int teamSize = minTeamSize;
+            // The total number of units should ideally occupy at most half of the grid
             int maxTeamSize = Math.Max(minTeamSize, grid.CellCount / 4);
             if (maxTeamSize > teamSize)
             {

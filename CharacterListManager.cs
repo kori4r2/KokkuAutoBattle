@@ -7,6 +7,9 @@ namespace AutoBattle
 {
     public class CharacterListManager
     {
+        private CharacterFactory characterFactory = new CharacterFactory();
+        private List<Character> allCharacters = new List<Character>();
+        public ReadOnlyCollection<Character> Characters => allCharacters.AsReadOnly();
         private List<Character> playerCharacters = new List<Character>();
         public bool PlayerHasUnitsAlive()
         {
@@ -27,9 +30,6 @@ namespace AutoBattle
             }
             return false;
         }
-        private CharacterFactory characterFactory = new CharacterFactory();
-        private List<Character> allCharacters = new List<Character>();
-        public ReadOnlyCollection<Character> Characters => allCharacters.AsReadOnly();
         Random random = new Random();
 
         public void CreatePlayerCharacter(CharacterClass playerClass, GridCell startingPosition)

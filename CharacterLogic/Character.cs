@@ -5,16 +5,15 @@ namespace AutoBattle
 {
     public abstract class Character
     {
+        protected abstract CharacterClass MyClass { get; }
         public string Name => $"{Team}{MyClass}({CharacterIndex})";
         public float Health { get; protected set; } = 0;
         public float BaseDamage { get; protected set; } = 0;
-        public float DamageMultiplier { get; protected set; } = 1;
-        public GridCell CurrentCell { get; protected set; } = null;
-        public int CharacterIndex { get; protected set; }
         protected char DisplayChar => Team == CharacterTeam.Player ? 'P' : Team == CharacterTeam.Enemy ? 'E' : 'X';
-        protected abstract CharacterClass MyClass { get; }
+        public int CharacterIndex { get; protected set; }
         public CharacterTeam Team { get; protected set; }
-        public Character Target { get; set; } = null;
+        protected Character target = null;
+        public GridCell CurrentCell { get; protected set; } = null;
         protected Random random = new Random();
 
         protected Character(GridCell startingPosition, CharacterTeam team, int index)
@@ -53,8 +52,8 @@ namespace AutoBattle
 
             Console.WriteLine($"{Name} turn started");
             TargetClosestEnemyAlive(characters);
-            if (DistanceToCharacter(Target) < 2)
-                Attack(Target);
+            if (DistanceToCharacter(target) < 2)
+                AttackTarget();
             else
                 MoveTowardsTarget(battlefield);
         }
@@ -70,7 +69,7 @@ namespace AutoBattle
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    Target = character;
+                    target = character;
                 }
             }
         }
@@ -80,7 +79,7 @@ namespace AutoBattle
             return Math.Abs(CurrentCell.Row - other.CurrentCell.Row) + Math.Abs(CurrentCell.Column - other.CurrentCell.Column);
         }
 
-        protected void Attack(Character target)
+        protected void AttackTarget()
         {
             if (target.Health <= 0)
             {
@@ -89,7 +88,7 @@ namespace AutoBattle
             }
             float calculatedDamage = random.Next(0, (int)BaseDamage);
             Console.WriteLine($"BaseDamage = {BaseDamage}, rolled {calculatedDamage}");
-            Console.WriteLine($"{Name} is attacking {Target.Name} for {calculatedDamage} damage");
+            Console.WriteLine($"{Name} is attacking {target.Name} for {calculatedDamage} damage");
             target.TakeDamage(calculatedDamage);
         }
 
@@ -129,25 +128,25 @@ namespace AutoBattle
 
         private bool ShouldMoveRight(Grid battlefield)
         {
-            return CurrentCell.Column < Target.CurrentCell.Column
+            return CurrentCell.Column < target.CurrentCell.Column
                 && battlefield.IsPositionValidAndVacant(CurrentCell.Column + 1, CurrentCell.Row);
         }
 
         private bool ShouldMoveLeft(Grid battlefield)
         {
-            return CurrentCell.Column > Target.CurrentCell.Column
+            return CurrentCell.Column > target.CurrentCell.Column
                 && battlefield.IsPositionValidAndVacant(CurrentCell.Column - 1, CurrentCell.Row);
         }
 
         private bool ShouldMoveUp(Grid battlefield)
         {
-            return CurrentCell.Row > Target.CurrentCell.Row
+            return CurrentCell.Row > target.CurrentCell.Row
                 && battlefield.IsPositionValidAndVacant(CurrentCell.Column, CurrentCell.Row - 1);
         }
 
         private bool ShouldMoveDown(Grid battlefield)
         {
-            return CurrentCell.Row < Target.CurrentCell.Row
+            return CurrentCell.Row < target.CurrentCell.Row
                 && battlefield.IsPositionValidAndVacant(CurrentCell.Column, CurrentCell.Row + 1);
         }
 

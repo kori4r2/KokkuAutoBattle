@@ -6,8 +6,8 @@ namespace AutoBattle
 {
     public class ClassesInfo
     {
-        private Dictionary<string, CharacterClass> stringParseDict = new Dictionary<string, CharacterClass>();
         private List<CharacterClass> classList = new List<CharacterClass>();
+        private Dictionary<string, CharacterClass> stringParseDict = new Dictionary<string, CharacterClass>();
         private Random random = new Random();
         StringBuilder stringBuilder = new StringBuilder(string.Empty);
 

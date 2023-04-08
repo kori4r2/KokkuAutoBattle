@@ -50,6 +50,7 @@ namespace AutoBattle
             int[] indexArray = GenerateIndexArray();
             for (int attempt = 0; attempt < freeCells.Count; attempt++)
             {
+                // Each loop ignores the previously searched array indexes
                 int randomResult = random.Next(0, freeCells.Count - attempt);
                 int cellIndex = indexArray[randomResult];
                 if (!freeCells[cellIndex].Occupied)
@@ -80,11 +81,6 @@ namespace AutoBattle
             if (row < 0 || row >= Rows || column < 0 || column >= Columns)
                 return null;
             return cells[(Columns * row) + column];
-        }
-
-        public GridCell GetCellAtIndex(int index)
-        {
-            return cells[index];
         }
 
         public void DrawBattlefieldChanges()
