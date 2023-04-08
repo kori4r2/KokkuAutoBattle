@@ -40,6 +40,7 @@ namespace AutoBattle
         public void Die()
         {
             CurrentCell.Occupied = false;
+            Console.WriteLine($"Player {CharacterIndex} has died");
         }
 
         public void StartTurn(Grid battlefield, ReadOnlyCollection<Character> characters)
@@ -48,7 +49,7 @@ namespace AutoBattle
                 return;
 
             TargetClosestEnemy(characters);
-            if (IsAdjacentToTarget(battlefield))
+            if (DistanceToCharacter(Target) < 2)
                 Attack(Target);
             else
                 MoveTowardsTarget(battlefield);
@@ -75,30 +76,26 @@ namespace AutoBattle
             return Math.Abs(CurrentCell.Row - other.CurrentCell.Row) + Math.Abs(CurrentCell.Column - other.CurrentCell.Column);
         }
 
-        protected bool IsAdjacentToTarget(Grid battlefield)
-        {
-            return DistanceToCharacter(Target) < 2;
-        }
-
         protected void Attack(Character target)
         {
             float calculatedDamage = random.Next(0, (int)BaseDamage);
             Console.WriteLine($"BaseDamage = {BaseDamage}, rolled for {calculatedDamage}");
+            Console.WriteLine($"Player {CharacterIndex} is attacking the player {Target.CharacterIndex} and did {calculatedDamage} damage");
             target.TakeDamage(calculatedDamage);
-            Console.WriteLine($"Player {CharacterIndex} is attacking the player {Target.CharacterIndex} and did {calculatedDamage} damage\n");
+            Console.WriteLine(Environment.NewLine);
         }
 
         protected void MoveTowardsTarget(Grid battlefield)
         {
             if (ShouldMoveRight(battlefield))
             {
-                MoveToPosition(battlefield, CurrentCell.Column - 1, CurrentCell.Row);
+                MoveToPosition(battlefield, CurrentCell.Column + 1, CurrentCell.Row);
                 LogMovement("right");
                 return;
             }
             if (ShouldMoveLeft(battlefield))
             {
-                MoveToPosition(battlefield, CurrentCell.Column + 1, CurrentCell.Row);
+                MoveToPosition(battlefield, CurrentCell.Column - 1, CurrentCell.Row);
                 LogMovement("left");
                 return;
             }
@@ -123,14 +120,14 @@ namespace AutoBattle
 
         private bool ShouldMoveRight(Grid battlefield)
         {
-            return CurrentCell.Column > Target.CurrentCell.Column
-                && battlefield.IsPositionValidAndVacant(CurrentCell.Column - 1, CurrentCell.Row);
+            return CurrentCell.Column < Target.CurrentCell.Column
+                && battlefield.IsPositionValidAndVacant(CurrentCell.Column + 1, CurrentCell.Row);
         }
 
         private bool ShouldMoveLeft(Grid battlefield)
         {
-            return CurrentCell.Column < Target.CurrentCell.Column
-                && battlefield.IsPositionValidAndVacant(CurrentCell.Column + 1, CurrentCell.Row);
+            return CurrentCell.Column > Target.CurrentCell.Column
+                && battlefield.IsPositionValidAndVacant(CurrentCell.Column - 1, CurrentCell.Row);
         }
 
         private bool ShouldMoveUp(Grid battlefield)
