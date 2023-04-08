@@ -10,7 +10,7 @@ namespace AutoBattle
         protected override void SetBaseStats()
         {
             Health = 100;
-            BaseDamage = 20;
+            BaseDamage = 30;
         }
     }
 }
