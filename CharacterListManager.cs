@@ -14,6 +14,7 @@ namespace AutoBattle
         private CharacterFactory characterFactory = new CharacterFactory();
         private List<Character> allCharacters = new List<Character>();
         public ReadOnlyCollection<Character> Characters => allCharacters.AsReadOnly();
+        Random random = new Random();
 
         public void CreatePlayerCharacter(CharacterClass playerClass, GridCell startingPosition)
         {
@@ -29,6 +30,17 @@ namespace AutoBattle
             EnemyCharacter = characterFactory.CreateEnemyCharacter(enemyClass, startingPosition);
             allCharacters.Add(EnemyCharacter);
             Console.Write($"Enemy Characher placed at row {EnemyCharacter.CurrentCell.Row} and column {EnemyCharacter.CurrentCell.Column}\n");
+        }
+
+        public void ShuffleList()
+        {
+            for (int index = 0; index < allCharacters.Count; index++)
+            {
+                int randomIndex = random.Next(index, allCharacters.Count);
+                Character selectedCharacter = allCharacters[randomIndex];
+                allCharacters[randomIndex] = allCharacters[index];
+                allCharacters[index] = selectedCharacter;
+            }
         }
     }
 }

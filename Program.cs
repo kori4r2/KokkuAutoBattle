@@ -53,6 +53,7 @@ namespace AutoBattle
         {
             characterList.CreatePlayerCharacter(ReadPlayerCharacterClass(), grid.FindEmptyPosition());
             characterList.CreateEnemyCharacter(classesInfo.GetRandomClass(), grid.FindEmptyPosition());
+            characterList.ShuffleList();
         }
 
         private CharacterClass ReadPlayerCharacterClass()
